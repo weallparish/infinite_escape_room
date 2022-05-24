@@ -20,4 +20,14 @@ public class InteractionController : MonoBehaviour
     {
         print("Interact");
     }
+
+    public virtual int getNumCode()
+    {
+        return 0;
+    }
+
+    public virtual void passCorrectCode()
+    {
+
+    }
 }

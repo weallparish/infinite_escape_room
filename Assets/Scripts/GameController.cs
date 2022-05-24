@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour
     private GameObject storage;
     [SerializeField]
     private GameObject key;
+    [SerializeField]
+    private GameObject paper;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +31,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void Generate()
@@ -56,7 +58,7 @@ public class GameController : MonoBehaviour
             lastLockColor = colorList[Random.Range(0, colorList.Count - 1)];
             colorList.Remove(lastLockColor);
 
-            storageInfo.GetComponent<StorageController>().setLock(lastLockColor);
+            storageInfo.setLock(lastLockColor);
         }
 
         newStorage = Instantiate(storage, room.transform);
@@ -65,5 +67,13 @@ public class GameController : MonoBehaviour
         storageInfo = newStorage.GetComponent<StorageController>();
 
         storageInfo.setItem(key, lastLockColor);
+        //storageInfo.setItem(paper, Color.white, "'Code: 99999'");
+
+        storageInfo.setLock(99999);
+    }
+
+    private void ChooseLockType()
+    {
+        int randomNum = Random.Range(0, 1);
     }
 }

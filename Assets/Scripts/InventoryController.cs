@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class InventoryController : MonoBehaviour
 {
+    [SerializeField]
+    private Canvas infoUI;
+    [SerializeField]
+    private TMPro.TextMeshProUGUI infoText;
+
     private List<GameObject> items;
     private int activeIndex;
 
@@ -67,6 +72,19 @@ public class InventoryController : MonoBehaviour
                 item.SetActive(false);
             }
         }
+
+        if (getSelectedItem() != null)
+        {
+            if (getSelectedItem().GetComponent<ItemController>().getInfo() == null)
+            {
+                infoUI.enabled = false;
+            }
+            else
+            {
+                infoText.text = getSelectedItem().GetComponent<ItemController>().getInfo();
+                infoUI.enabled = true;
+            }
+        }
     }
 
     public void addItem(GameObject item)
@@ -96,6 +114,13 @@ public class InventoryController : MonoBehaviour
 
     public GameObject getSelectedItem()
     {
-        return items[activeIndex];
+        if (items.Count > 0)
+        {
+            return items[activeIndex];
+        }
+        else
+        {
+            return null;
+        }
     }
 }

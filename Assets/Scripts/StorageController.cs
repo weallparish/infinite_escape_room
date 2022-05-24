@@ -4,26 +4,38 @@ using UnityEngine;
 
 public class StorageController : InteractionController
 {
+    private InventoryController inventory;
+    private KeypadController keypad;
+
     [SerializeField]
     private Animator animator;
     [SerializeField]
-    private GameObject itemPrefab;
-    [SerializeField]
     private GameObject lockSprite;
     [SerializeField]
-    private Color itemColor;
+    private Sprite keypadLockImg;
     [SerializeField]
-    private Color keyColor;
-    [SerializeField]
-    private bool isLocked;
+    private Sprite keyLockImg;
 
-    private InventoryController inventory;
+    private GameObject itemPrefab;
+
+    private string itemInfo;
+
+    private Color itemColor;
+
+    private Color keyColor;
+
+    private int keypadNum;
 
     private bool containsItems;
+
+    private string lockType;
+
+    private bool isLocked;
 
     private void Start()
     {
         inventory = FindObjectOfType<InventoryController>();
+        keypad = FindObjectOfType<KeypadController>();
     }
 
     public override void interact()
@@ -36,12 +48,14 @@ public class StorageController : InteractionController
             {
                 GameObject newItem = Instantiate(itemPrefab, inventory.transform);
                 newItem.GetComponent<SpriteRenderer>().color = itemColor;
+                newItem.GetComponent<ItemController>().setInfo(itemInfo);
+
 
                 inventory.addItem(newItem.gameObject);
                 containsItems = false;
             }
         }
-        else
+        else if (inventory.getSelectedItem() != null && lockType == "key")
         {
             Color selectedColor = inventory.getSelectedItem().GetComponent<SpriteRenderer>().color;
 
@@ -53,11 +67,24 @@ public class StorageController : InteractionController
                 inventory.removeItem(inventory.getSelectedItem().gameObject);
             }
         }
+        else if (lockType == "keypad num")
+        {
+            keypad.showKeypad(this);
+        }
     }
 
-    public void setItem(GameObject item, Color color)
+    public override void passCorrectCode()
+    {
+        isLocked = false;
+        lockSprite.SetActive(false);
+
+        keypad.hideKeypad();
+    }
+
+    public void setItem(GameObject item, Color color, string info = null)
     {
         itemPrefab = item;
+        itemInfo = info;
         itemColor = color;
 
         containsItems = true;
@@ -66,8 +93,32 @@ public class StorageController : InteractionController
     public void setLock(Color color)
     {
         isLocked = true;
+        lockType = "key";
         keyColor = color;
 
         lockSprite.GetComponent<SpriteRenderer>().color = keyColor;
+        lockSprite.GetComponent<SpriteRenderer>().sprite = keyLockImg;
+    }
+
+    public void setLock(int num)
+    {
+        isLocked = true;
+        lockType = "keypad num";
+        keypadNum = num;
+
+        lockSprite.GetComponent<SpriteRenderer>().color = Color.white;
+        lockSprite.GetComponent<SpriteRenderer>().sprite = keypadLockImg;
+    }
+
+    public override int getNumCode()
+    {
+        if (lockType == "keypad num")
+        {
+            return keypadNum;
+        }
+        else
+        {
+            return 0;
+        }
     }
 }
