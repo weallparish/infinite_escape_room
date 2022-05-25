@@ -28,7 +28,7 @@ public class KeypadController : MonoBehaviour
 
     }
 
-    public void showKeypad(StorageController connected)
+    public void showKeypad(InteractionController connected)
     {
         keypadText = "";
 
@@ -80,11 +80,10 @@ public class KeypadController : MonoBehaviour
     {
         if (keypadLength == keypadText.Length)
         {
-            if (connectedCode== keypadText)
+            if (connectedCode == keypadText)
             {
                 keypadTextField.color = Color.green;
                 connectedObject.passCorrectCode();
-
             }
             else
             {

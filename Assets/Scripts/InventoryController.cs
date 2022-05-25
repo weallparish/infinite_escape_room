@@ -57,6 +57,16 @@ public class InventoryController : MonoBehaviour
 
             showSelectedItem();
         }
+
+        if (getSelectedItem() == null || getSelectedItem().GetComponent<ItemController>().getInfo(false) == null)
+        {
+            infoUI.enabled = false;
+        }
+        else
+        {
+            infoText.text = "'" + getSelectedItem().GetComponent<ItemController>().getInfo(true) + "'";
+            infoUI.enabled = true;
+        }
     }
 
     private void showSelectedItem()
@@ -70,19 +80,6 @@ public class InventoryController : MonoBehaviour
             else
             {
                 item.SetActive(false);
-            }
-        }
-
-        if (getSelectedItem() != null)
-        {
-            if (getSelectedItem().GetComponent<ItemController>().getInfo() == null)
-            {
-                infoUI.enabled = false;
-            }
-            else
-            {
-                infoText.text = getSelectedItem().GetComponent<ItemController>().getInfo();
-                infoUI.enabled = true;
             }
         }
     }
@@ -110,6 +107,8 @@ public class InventoryController : MonoBehaviour
         {
             activeIndex = items.Count - 1;
         }
+
+        showSelectedItem();
     }
 
     public GameObject getSelectedItem()
@@ -122,5 +121,10 @@ public class InventoryController : MonoBehaviour
         {
             return null;
         }
+    }
+
+    public List<GameObject> getAllItems()
+    {
+        return items;
     }
 }

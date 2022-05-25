@@ -17,19 +17,15 @@ public class StorageController : InteractionController
     private Sprite keyLockImg;
 
     private GameObject itemPrefab;
-
     private string itemInfo;
-
+    private int itemAmount;
     private Color itemColor;
 
     private Color keyColor;
-
     private int keypadNum;
 
     private bool containsItems;
-
     private string lockType;
-
     private bool isLocked;
 
     private void Start()
@@ -46,20 +42,35 @@ public class StorageController : InteractionController
 
             if (containsItems)
             {
-                GameObject newItem = Instantiate(itemPrefab, inventory.transform);
-                newItem.GetComponent<SpriteRenderer>().color = itemColor;
-                newItem.GetComponent<ItemController>().setInfo(itemInfo);
+                bool itemAdded = false;
 
+                foreach (GameObject item in inventory.getAllItems())
+                {
+                    if (item.GetComponent<SpriteRenderer>().color == itemColor && item.GetComponent<ItemController>().getInfo(false) == itemInfo)
+                    {
+                        item.GetComponent<ItemController>().addItem();
+                        itemAdded = true;
 
-                inventory.addItem(newItem.gameObject);
-                containsItems = false;
+                        break;
+                    }
+                }
+
+                if (!itemAdded)
+                {
+                    GameObject newItem = Instantiate(itemPrefab, inventory.transform);
+                    newItem.GetComponent<SpriteRenderer>().color = itemColor;
+                    newItem.GetComponent<ItemController>().setInfo(itemInfo, itemAmount);
+
+                    inventory.addItem(newItem.gameObject);
+                    containsItems = false;
+                }
             }
         }
         else if (inventory.getSelectedItem() != null && lockType == "key")
         {
             Color selectedColor = inventory.getSelectedItem().GetComponent<SpriteRenderer>().color;
 
-            if (selectedColor == keyColor)
+            if (selectedColor == keyColor && inventory.getSelectedItem().GetComponent<ItemController>().hasAmount())
             {
                 isLocked = false;
                 lockSprite.SetActive(false);
@@ -78,14 +89,24 @@ public class StorageController : InteractionController
         isLocked = false;
         lockSprite.SetActive(false);
 
+        foreach (GameObject item in inventory.getAllItems()) 
+        {
+            if (item.GetComponent<ItemController>().getInfo(false) == keypadNum.ToString())
+            {
+                inventory.removeItem(item);
+                break;
+            }
+        }
+
         keypad.hideKeypad();
     }
 
-    public void setItem(GameObject item, Color color, string info = null)
+    public void setItem(GameObject item, Color color, int amount, string info = null)
     {
         itemPrefab = item;
         itemInfo = info;
         itemColor = color;
+        itemAmount = amount;
 
         containsItems = true;
     }
